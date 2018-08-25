@@ -24,31 +24,40 @@ class Board:
     def checkForWinner(self, player):
         pat = player*3
         return ("".join(self.gs[0:3]) == pat or "".join(self.gs[3:6]) == pat
-        or "".join(self.gs[7:9]) == pat or "".join(self.gs[0:7:3]) == pat
+        or "".join(self.gs[6:9]) == pat or "".join(self.gs[0:7:3]) == pat
         or "".join(self.gs[1:8:3]) == pat or "".join(self.gs[2:9:3]) == pat
         or "".join(self.gs[0:9:4]) == pat or "".join(self.gs[2:7:2]) == pat)
 
     # Decision tree to determine optimal move, returns the best move for computer
-    def moveAI(self, player):
+    def moveAI(self, player, opp):
         corners = [0,2,6,8]
         cardinal = range(1,8,2)
         moves = []
         
-        # See if computer can win
+        # See if computer can win or can make a blocking move to prevent win
+        # for human opponent
         for i in range(0,9):
             if self.gs[i] == " ":
                 self.gs[i] = player
                 if self.checkForWinner(player):
                     return i
-                else: 
+                self.gs[i] = opp
+                if self.checkForWinner(opp):
                     self.gs[i] = " "
+                    return i
+                self.gs[i] = " "
         # Make a move to one of the corners randomly if no winning move is found
         for i in corners:
             if self.gs[i] == " ":
                 moves.append(i)
-        if len(moves) != 0:
-            return random.choice(moves)
+        if len(moves) < 4 and self.gs[4] == " ":
+            return 4
+        elif len(moves) != 0:
+            # Unless they have 2 corners taken, then make a cardinal move
+            if not (self.gs[0] == opp and self.gs[8] == opp) or (self.gs[2] == opp and self.gs[6] == opp):
+                return random.choice(moves)
         # Make a move to the center
+        moves = []
         if self.gs[4] == " ":
             return 4
         # Otherwise, make a move to one of the cardinal directions
@@ -60,6 +69,7 @@ class Board:
 
     def checkForDraw(self):
         if " " not in self.gs:
+            self.refreshBoard()
             print ("Looks like a cats game pal!")
             self.playAgain = input("Would you like to play again? ").lower()[0:1]
 
@@ -82,7 +92,6 @@ while (board.playAgain != "n"):
     board.refreshBoard()
     move = int(input("\nPlease input your move: "))
     
-    
     # Input validation
     while move <= -1 or move >= 9 or board.gs[move] != " ":
         print("Invalid move!")
@@ -99,7 +108,7 @@ while (board.playAgain != "n"):
     # If game is getting restarted, skip computer turn to proceed with new loop
     if (board.playAgain == " "):
         # Computer turn
-        cmove = board.moveAI(comp)
+        cmove = board.moveAI(comp, player)
         board.inputMove(cmove, comp)
         
         if board.checkForWinner(comp):
