@@ -41,11 +41,14 @@ class Board:
                 self.gs[i] = player
                 if self.checkForWinner(player):
                     return i
+                self.gs[i] = " "
+        for i in range(0,9):                
+            if self.gs[i] == " ":
                 self.gs[i] = opp
                 if self.checkForWinner(opp):
                     self.gs[i] = " "
                     return i
-                self.gs[i] = " "
+                self.gs[i] = " " 
         # Make a move to one of the corners randomly if no winning move is found
         for i in corners:
             if self.gs[i] == " ":
@@ -54,7 +57,7 @@ class Board:
             return 4
         elif len(moves) != 0:
             # Unless they have 2 corners taken, then make a cardinal move
-            if not (self.gs[0] == opp and self.gs[8] == opp) or (self.gs[2] == opp and self.gs[6] == opp):
+            if not ((self.gs[0] == opp and self.gs[8] == opp) or (self.gs[2] == opp and self.gs[6] == opp)):
                 return random.choice(moves)
         # Make a move to the center
         moves = []
@@ -68,52 +71,54 @@ class Board:
             return random.choice(moves)
 
     def checkForDraw(self):
-        if " " not in self.gs:
-            self.refreshBoard()
-            print ("Looks like a cats game pal!")
-            self.playAgain = input("Would you like to play again? ").lower()[0:1]
+        return " " not in self.gs
+            # self.refreshBoard()
+            # print ("Looks like a cats game pal!")
+            # self.playAgain = input("Would you like to play again? ").lower()[0:1]
 
     def endGame(self, player):
         self.refreshBoard()
         print("{} woN!".format(player))
         self.playAgain = input("Would you like to play again? ").lower()[0:1]
 
-# Make new tictactoe board object
+# Uncomment below for CLI tic tac toe
 
-board = Board()
+# # Make new tictactoe board object
 
-# Main game loop
+# board = Board()
 
-while (board.playAgain != "n"):
-    
-    player = "X"
-    comp = "O"
-    
-    board.refreshBoard()
-    move = int(input("\nPlease input your move: "))
-    
-    # Input validation
-    while move <= -1 or move >= 9 or board.gs[move] != " ":
-        print("Invalid move!")
-        move = int(input("\nPlease input your move: "))    
-    
-    # Player turn
-    board.inputMove(move, player)    
+# # Main game loop
 
-    if board.checkForWinner(player):
-        board.endGame(player)
-
-    board.checkForDraw()
+# while (board.playAgain != "n"):
     
-    # If game is getting restarted, skip computer turn to proceed with new loop
-    if (board.playAgain == " "):
-        # Computer turn
-        cmove = board.moveAI(comp, player)
-        board.inputMove(cmove, comp)
+#     player = "X"
+#     comp = "O"
+    
+#     board.refreshBoard()
+#     move = int(input("\nPlease input your move: "))
+    
+#     # Input validation
+#     while move <= -1 or move >= 9 or board.gs[move] != " ":
+#         print("Invalid move!")
+#         move = int(input("\nPlease input your move: "))    
+    
+#     # Player turn
+#     board.inputMove(move, player)    
+
+#     if board.checkForWinner(player):
+#         board.endGame(player)
+
+#     board.checkForDraw()
+    
+#     # If game is getting restarted, skip computer turn to proceed with new loop
+#     if (board.playAgain == " "):
+#         # Computer turn
+#         cmove = board.moveAI(comp, player)
+#         board.inputMove(cmove, comp)
         
-        if board.checkForWinner(comp):
-            board.endGame(comp)
+#         if board.checkForWinner(comp):
+#             board.endGame(comp)
         
-    if board.playAgain == "y":
-        board.__init__()
+#     if board.playAgain == "y":
+#         board.__init__()
     
